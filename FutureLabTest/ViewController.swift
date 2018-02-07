@@ -9,9 +9,10 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    @IBOutlet weak var startStopTracking: UIButton!
 
     @IBOutlet weak var positionLabel: UILabel!
-    @IBOutlet weak var positionButton: UIButton!
     var positioner = Positioner()
     
     @IBOutlet weak var adressField: UITextView!
