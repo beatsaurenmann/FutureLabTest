@@ -89,15 +89,6 @@ class ViewController: UIViewController {
 }
 
 
-class Position {
-    
-    init() {
-    }
-    
-    var DisplayString: String { get { return "lat = 45.30149, long = 12.0430" } }
-}
-
-
 class Address {
     
     init() {
