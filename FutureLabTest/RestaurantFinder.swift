@@ -11,8 +11,8 @@ import Alamofire
 import SwiftyXMLParser
 import CoreLocation
 
-class RestaurantsInfo {
-    var restaurants = [RestaurantInfo]()
+class RestaurantGuide {
+    var restaurants = [Restaurant]()
     
     init() {
     }
@@ -22,88 +22,110 @@ class RestaurantsInfo {
         get {
             var result = ""
             for rest in restaurants {
-                result += rest.DisplayString + "\n"
+                result += rest.DisplayString + "\n\n"
             }
             return result
         }
     }
 }
 
-class RestaurantInfo {
-    var name: String = "unknown"
-    var street: String = "unknown"
-    var number: String = "unknown"
+class Restaurant {
+    var latitude: Double
+    var longitude: Double
     
-    var lat: String?
-    var lon: String?
+    var restaurantName: String = "Nameless Restaurant"
+    var street: String?
+    var houseNumber: String?
     
-    init() {
+    init(_ lat: Double, _ lon: Double) {
+        self.latitude = lat
+        self.longitude = lon
     }
     
     var DisplayString: String
     {
         get {
-            return "\(name) (\(street) \(number))"
+            var address = ""
+            if let street = street {
+                address = street
+                if let houseNumber = houseNumber {
+                    address += " \(houseNumber)"
+                }
+            } else {
+                address = "<address unknown>"
+            }
+            return "\(restaurantName) \n\(address)"
         }
     }
 }
 
-class RestaurantFinder : NSObject, XMLParserDelegate {
-    
-    var lastPosition: RestaurantsInfo?
-    
-    override init() {
-        super.init()
-    }
-    
-    func updatePosition(_ position: CLLocation, _ success: @escaping (RestaurantsInfo) -> (), _ fail: () -> ()) {
+class RestaurantFinder {
+    static func updatePosition(_ position: CLLocation, _ onRestaurantsFound: @escaping (RestaurantGuide) -> (), _ onError: @escaping (String) -> ()) {
         
-        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
+        let downloadDestination: DownloadRequest.DownloadFileDestination = { _, _ in
             let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let fileURL = documentsURL.appendingPathComponent("xapi.xml")
-            
             return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
-        let centerLong = position.coordinate.longitude
-        let centerLat = position.coordinate.latitude
         
-        let lowerLong = Double(centerLong) - 0.01// 8.74477
-        let lowerLat = Double(centerLat) - 0.01// 47.4972
-        let upperLong = Double(centerLong) + 0.01// 8.75962
-        let upperLat = Double(centerLat) + 0.01// 47.50549
-        let urlString = "https://www.overpass-api.de/api/xapi?node[amenity=restaurant][bbox=\(lowerLong),\(lowerLat),\(upperLong),\(upperLat)]"
+        let centerLong = Double(position.coordinate.longitude)
+        let centerLat = Double(position.coordinate.latitude)
+        let offset = 0.01
+        let geoConstraint = "[bbox=\(centerLong - offset),\(centerLat - offset),\(centerLong + offset),\(centerLat + offset)]"
+        
+        let httpRequest = "https://www.overpass-api.de/api/xapi?node[amenity=restaurant]\(geoConstraint)"
 
-        let allInfos = RestaurantsInfo()
-        
-        Alamofire.download(urlString, to: destination).response { response in
-            let xmlText = try! String(contentsOf: response.destinationURL!, encoding: .utf8)
-            let xml = try! XML.parse(xmlText)
-            for info in xml["osm", "node"] {
-                let restaurant = RestaurantInfo()
-                
-                for (key, value) in info.attributes {
-                    if key == "lat" {
-                        restaurant.lat = value
-                    }
-                    if key == "lon" {
-                        restaurant.lon = value
-                    }
-                }
-                for tag in info["tag"] {
-                    if tag.attributes["k"] == "name" {
-                        restaurant.name = tag.attributes["v"]!
-                    }
-                    if tag.attributes["k"] == "addr:street" {
-                        restaurant.street = tag.attributes["v"]!
-                    }
-                    if tag.attributes["k"] == "addr:housenumber" {
-                        restaurant.number = tag.attributes["v"]!
-                    }
-                }
-                allInfos.restaurants.append(restaurant)
+        Alamofire.download(httpRequest, to: downloadDestination).response {
+            response -> Void in
+            
+            if let error = response.error {
+                onError(error.localizedDescription)
+                return
             }
             
-            success(allInfos)
+            do {
+                let xmlText = try String(contentsOf: response.destinationURL!, encoding: .utf8)
+                let xml = try XML.parse(xmlText)
+                
+                let restaurantGuide = parseXML(xml)
+                
+                if restaurantGuide.restaurants.count > 0 {
+                    onRestaurantsFound(restaurantGuide)
+                } else {
+                    onError("no Restaurants found")
+                }
+            }
+            catch {
+                onError("XML file could not be found/parsed")
+                return
+            }
         }
+    }
+    
+    static func parseXML(_ xml: XML.Accessor) -> RestaurantGuide {
+        let guide = RestaurantGuide()
+        for info in xml["osm", "node"] {
+            var lat, lon: Double?
+            
+            for (key, value) in info.attributes {
+                if key == "lat" { if let l = Double(value) { lat = l } }
+                if key == "lon" { if let l = Double(value) { lon = l } }
+            }
+            
+            guard let latitude = lat, let longitude = lon else {
+                continue
+            }
+            
+            let restaurant = Restaurant(latitude, longitude)
+            
+            for tag in info["tag"] {
+                if tag.attributes["k"] == "name" { restaurant.restaurantName = tag.attributes["v"]! }
+                if tag.attributes["k"] == "addr:street" { restaurant.street = tag.attributes["v"]! }
+                if tag.attributes["k"] == "addr:housenumber" { restaurant.houseNumber = tag.attributes["v"]! }
+            }
+            
+            guide.restaurants.append(restaurant)
+        }
+        return guide
     }
 }

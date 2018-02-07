@@ -12,13 +12,10 @@ import Nominatim
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var restaurantField: UITextView!
-    @IBOutlet weak var restaurantButton: UIButton!
-    var restaurantFinder = RestaurantFinder()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        stopTracking()
     }
     
     //MARK: GPS tracker
@@ -101,12 +98,11 @@ class ViewController: UIViewController {
             latestSearchLocation = currentLocation
             latestSearch = Date()
             updateAddress()
+            updateCachedRestaurants()
         }
     }
     
     //MARK: Closest address
-    
-    var addressFinder = AddressFinder()
     
     @IBOutlet weak var adressField: UITextView!
     
@@ -115,7 +111,7 @@ class ViewController: UIViewController {
         adressField.textColor = UIColor.gray
         
         DispatchQueue.global(qos: .default).async {
-            self.addressFinder.findAddress(self.currentLocation!, { p in self.displayAddress(p) }, self.displayAddressError)
+            AddressFinder.findAddress(self.currentLocation!, { p in self.displayAddress(p) }, self.displayAddressError)
         }
     }
     
@@ -135,28 +131,25 @@ class ViewController: UIViewController {
     
     //MARK: Restaurants in the neighbourhood
     
-    @IBAction func updateRestaurantClicked(_ sender: Any) {
+    @IBOutlet weak var restaurantField: UITextView!
+    
+    func updateCachedRestaurants() {
         restaurantField.text = "updating..."
         restaurantField.textColor = UIColor.gray
         
         DispatchQueue.global(qos: .default).async {
-            self.restaurantFinder.updatePosition(self.currentLocation!,
-                { p in
-                    self.displayRestaurant(p)
-                },
-                self.displayRestaurantError
-            )
+            RestaurantFinder.updatePosition(self.currentLocation!, { p in self.displayRestaurant(p) }, self.displayRestaurantError )
         }
     }
     
-    func displayRestaurant(_ restaurantInfo: RestaurantsInfo) {
+    func displayRestaurant(_ restaurantGuide: RestaurantGuide) {
         DispatchQueue.main.async {
-            self.restaurantField.text = restaurantInfo.DisplayString
+            self.restaurantField.text = restaurantGuide.DisplayString
             self.restaurantField.textColor = UIColor.black
         }
     }
     
-    func displayRestaurantError() {
+    func displayRestaurantError(_ errorMessage: String) {
         DispatchQueue.main.async {
             self.restaurantField.text = "something went wrong"
             self.restaurantField.textColor = UIColor.red

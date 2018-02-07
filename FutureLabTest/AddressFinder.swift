@@ -45,12 +45,8 @@ extension Location {
     }
 }
 
-class AddressFinder {
-    
-    init() {
-    }
-    
-    func findAddress(_ gpsLocation: CLLocation, _ onLocationFound: @escaping (Location) -> (), _ onError: @escaping (String) -> ()) {
+class AddressFinder {    
+    static func findAddress(_ gpsLocation: CLLocation, _ onLocationFound: @escaping (Location) -> (), _ onError: @escaping (String) -> ()) {
         
         Nominatim.getLocation(fromLatitude: String(gpsLocation.coordinate.latitude), longitude: String(gpsLocation.coordinate.longitude)) {
             (error, location) -> Void in
