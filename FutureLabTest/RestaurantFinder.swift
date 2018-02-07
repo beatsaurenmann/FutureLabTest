@@ -8,7 +8,6 @@
 
 import Foundation
 import Alamofire
-import SWXMLHash
 import SwiftyXMLParser
 
 class RestaurantsInfo {
