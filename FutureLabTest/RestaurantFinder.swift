@@ -9,6 +9,7 @@
 import Foundation
 import Alamofire
 import SwiftyXMLParser
+import CoreLocation
 
 class RestaurantsInfo {
     var restaurants = [RestaurantInfo]()
@@ -55,7 +56,7 @@ class RestaurantFinder : NSObject, XMLParserDelegate {
         super.init()
     }
     
-    func updatePosition(_ position: Position, _ success: @escaping (RestaurantsInfo) -> (), _ fail: () -> ()) {
+    func updatePosition(_ position: CLLocation, _ success: @escaping (RestaurantsInfo) -> (), _ fail: () -> ()) {
         
         let destination: DownloadRequest.DownloadFileDestination = { _, _ in
             let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -63,13 +64,13 @@ class RestaurantFinder : NSObject, XMLParserDelegate {
             
             return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
-        let centerLong = position.longitude!
-        let centerLat = position.latitude!
+        let centerLong = position.coordinate.longitude
+        let centerLat = position.coordinate.latitude
         
-        let lowerLong = Double(centerLong)! - 0.01// 8.74477
-        let lowerLat = Double(centerLat)! - 0.01// 47.4972
-        let upperLong = Double(centerLong)! + 0.01// 8.75962
-        let upperLat = Double(centerLat)! + 0.01// 47.50549
+        let lowerLong = Double(centerLong) - 0.01// 8.74477
+        let lowerLat = Double(centerLat) - 0.01// 47.4972
+        let upperLong = Double(centerLong) + 0.01// 8.75962
+        let upperLat = Double(centerLat) + 0.01// 47.50549
         let urlString = "https://www.overpass-api.de/api/xapi?node[amenity=restaurant][bbox=\(lowerLong),\(lowerLat),\(upperLong),\(upperLat)]"
 
         let allInfos = RestaurantsInfo()

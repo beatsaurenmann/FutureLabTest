@@ -7,13 +7,11 @@
 //
 
 import UIKit
+import CoreLocation
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var startStopTracking: UIButton!
-
-    @IBOutlet weak var positionLabel: UILabel!
-    var positioner = Positioner()
+    var latestSearchLocation: CLLocation?
     
     @IBOutlet weak var adressField: UITextView!
     @IBOutlet weak var addressButton: UIButton!
@@ -23,45 +21,76 @@ class ViewController: UIViewController {
     @IBOutlet weak var restaurantButton: UIButton!
     var restaurantFinder = RestaurantFinder()
     
-    var lastPosition: Position?
+    var currentLocation: CLLocation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
     
+    //MARK: GPS tracker
     
-    @IBAction func updatePositionClicked(_ sender: Any) {
-        positionLabel.text = "updating..."
-        positionLabel.textColor = UIColor.gray
+    @IBOutlet weak var startStopButton: UIButton!
+    
+    var positioner = Positioner()
+    @IBOutlet weak var locationLabel: UILabel!
+    
+    @IBAction func updateLocationClicked(_ sender: Any) {
+        if positioner.isTracking {
+            stopTracking()
+        } else {
+            startTracking()
+        }
+    }
+    
+    func startTracking() {
+        startStopButton.setTitle("Stop Tracking",for: .normal)
         
-        DispatchQueue.global(qos: .default).async {
-            self.positioner.updatePosition({ p in self.displayPosition(p) }, self.displayPositionError)
-        }
-    }
-    
-    func displayPosition(_ position: Position) {
-        DispatchQueue.main.async {
-            self.positionLabel.text = position.DisplayString
-            self.positionLabel.textColor = UIColor.black
+        locationLabel.text = "waiting for GPS signal..."
+        locationLabel.textColor = UIColor.gray
         
-            self.lastPosition = position
+        self.positioner.startTracking({ p in self.displayLocation(p) }, self.displayErrorFromPositioner)
+    }
+    
+    func stopTracking() {
+        startStopButton.setTitle("Start Tracking",for: .normal)
+        
+        self.positioner.stopTracking()
+        
+        locationLabel.text = "n.a."
+        locationLabel.textColor = UIColor.gray
+    }
+    
+    func displayLocation(_ location: CLLocation) {
+        DispatchQueue.main.async {
+            if (self.positioner.isTracking) {
+                self.locationLabel.text = location.DisplayString
+                self.locationLabel.textColor = UIColor.black
+                
+                self.currentLocation = location
+            }
         }
     }
     
-    func displayPositionError() {
+    func displayErrorFromPositioner(_ message: String) {
         DispatchQueue.main.async {
-            self.positionLabel.text = "something went wrong"
-            self.positionLabel.textColor = UIColor.red
+            self.locationLabel.text = "Error: \(message)"
+            self.locationLabel.textColor = UIColor.red
         }
     }
+    
+    //MARK: Closest address
     
     @IBAction func updateAddressClicked(_ sender: Any) {
+        let distanceBetween: CLLocationDistance = latestSearchLocation!.distance(from: currentLocation!)
+        //        distance.text = String(format: "%.2f", distanceBetween)
+        
+        
         adressField.text = "updating..."
         adressField.textColor = UIColor.gray
         
         DispatchQueue.global(qos: .default).async {
-            self.addressFinder.updatePosition(self.lastPosition!,
+            self.addressFinder.updatePosition(self.currentLocation!,
                 { p in
                     self.displayAddress(p)
                 },
@@ -84,12 +113,14 @@ class ViewController: UIViewController {
         }
     }
     
+    //MARK: Restaurants in the neighbourhood
+    
     @IBAction func updateRestaurantClicked(_ sender: Any) {
         restaurantField.text = "updating..."
         restaurantField.textColor = UIColor.gray
         
         DispatchQueue.global(qos: .default).async {
-            self.restaurantFinder.updatePosition(self.lastPosition!,
+            self.restaurantFinder.updatePosition(self.currentLocation!,
                 { p in
                     self.displayRestaurant(p)
                 },
@@ -111,5 +142,4 @@ class ViewController: UIViewController {
             self.restaurantField.textColor = UIColor.red
         }
     }
-    
 }

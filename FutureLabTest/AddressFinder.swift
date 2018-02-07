@@ -8,6 +8,7 @@
 
 import Foundation
 import Nominatim
+import CoreLocation
 
 class Address {
     var country: String?
@@ -35,9 +36,9 @@ class AddressFinder {
         
     }
     
-    func updatePosition(_ position: Position, _ success: @escaping (Address) -> (), _ fail: @escaping () -> ()) {
+    func updatePosition(_ position: CLLocation, _ success: @escaping (Address) -> (), _ fail: @escaping () -> ()) {
         
-        Nominatim.getLocation(fromLatitude: position.latitude!, longitude: position.longitude!, completion: {(error, location) -> Void in
+        Nominatim.getLocation(fromLatitude: String(position.coordinate.latitude), longitude: String(position.coordinate.longitude), completion: {(error, location) -> Void in
             
             if error != nil {
                 fail()

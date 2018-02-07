@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_0" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -15,7 +11,7 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="FutureLabTest" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your current position is:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hY3-pw-dIu">
@@ -25,7 +21,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="naE-uw-Q3Q">
-                                <rect key="frame" x="16" y="83" width="288" height="21"/>
+                                <rect key="frame" x="16" y="83" width="568" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -37,7 +33,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Rj-uf-gNb">
-                                <rect key="frame" x="253" y="116" width="51" height="30"/>
+                                <rect key="frame" x="533" y="116" width="51" height="30"/>
                                 <state key="normal" title="Update"/>
                                 <connections>
                                     <action selector="updateAddressClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="F5b-Ue-qwt"/>
@@ -50,14 +46,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2uH-lB-FrG">
-                                <rect key="frame" x="253" y="211" width="51" height="30"/>
+                                <rect key="frame" x="533" y="211" width="51" height="30"/>
                                 <state key="normal" title="Update"/>
                                 <connections>
                                     <action selector="updateRestaurantClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="via-NL-tCj"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iLS-IT-GFA">
-                                <rect key="frame" x="16" y="149" width="288" height="58"/>
+                                <rect key="frame" x="16" y="149" width="568" height="58"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="58" id="OHS-Eu-Xvi"/>
@@ -67,14 +63,14 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kqw-qN-LHY">
-                                <rect key="frame" x="207" y="20" width="97" height="30"/>
+                                <rect key="frame" x="487" y="20" width="97" height="30"/>
                                 <state key="normal" title="Start Tracking"/>
                                 <connections>
-                                    <action selector="updatePositionClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ayj-Kz-xjB"/>
+                                    <action selector="updateLocationClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ayj-Kz-xjB"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95P-Zc-OTT">
-                                <rect key="frame" x="16" y="244" width="288" height="304"/>
+                                <rect key="frame" x="16" y="244" width="568" height="336"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -111,10 +107,10 @@
                     <connections>
                         <outlet property="addressButton" destination="8Rj-uf-gNb" id="ILv-Wj-tKL"/>
                         <outlet property="adressField" destination="iLS-IT-GFA" id="0YE-1E-biS"/>
-                        <outlet property="positionLabel" destination="naE-uw-Q3Q" id="3Ch-Ed-TQu"/>
+                        <outlet property="locationLabel" destination="naE-uw-Q3Q" id="3Ch-Ed-TQu"/>
                         <outlet property="restaurantButton" destination="2uH-lB-FrG" id="7nE-IJ-hkv"/>
                         <outlet property="restaurantField" destination="95P-Zc-OTT" id="sFJ-ZT-uT2"/>
-                        <outlet property="startStopTracking" destination="kqw-qN-LHY" id="5ZG-fe-r6C"/>
+                        <outlet property="startStopButton" destination="kqw-qN-LHY" id="5ZG-fe-r6C"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
