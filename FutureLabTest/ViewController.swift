@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var addressButton: UIButton!
     var addressFinder = AddressFinder()
     
-    @IBOutlet weak var restaurantLabel: UILabel!
+    @IBOutlet weak var restaurantField: UITextView!
     @IBOutlet weak var restaurantButton: UIButton!
     var restaurantFinder = RestaurantFinder()
     
@@ -59,7 +59,7 @@ class ViewController: UIViewController {
         adressField.text = "updating..."
         adressField.textColor = UIColor.gray
         
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .default).async {
             self.addressFinder.updatePosition(self.lastPosition!,
                 { p in
                     self.displayAddress(p)
@@ -84,35 +84,31 @@ class ViewController: UIViewController {
     }
     
     @IBAction func updateRestaurantClicked(_ sender: Any) {
-        restaurantLabel.text = "updating..."
-        restaurantLabel.textColor = UIColor.gray
+        restaurantField.text = "updating..."
+        restaurantField.textColor = UIColor.gray
         
-        DispatchQueue.main.async {
-            self.restaurantFinder.updatePosition({ p in self.displayRestaurant(p) }, self.displayRestaurantError)
+        DispatchQueue.global(qos: .default).async {
+            self.restaurantFinder.updatePosition(self.lastPosition!,
+                { p in
+                    self.displayRestaurant(p)
+                },
+                self.displayRestaurantError
+            )
         }
     }
     
-    func displayRestaurant(_ restaurantInfo: RestaurantInfo) {
+    func displayRestaurant(_ restaurantInfo: RestaurantsInfo) {
         DispatchQueue.main.async {
-            self.restaurantLabel.text = restaurantInfo.DisplayString
-            self.restaurantLabel.textColor = UIColor.black
+            self.restaurantField.text = restaurantInfo.DisplayString
+            self.restaurantField.textColor = UIColor.black
         }
     }
     
     func displayRestaurantError() {
         DispatchQueue.main.async {
-            self.restaurantLabel.text = "something went wrong"
-            self.restaurantLabel.textColor = UIColor.red
+            self.restaurantField.text = "something went wrong"
+            self.restaurantField.textColor = UIColor.red
         }
     }
     
-}
-
-
-class RestaurantInfo {
-    
-    init() {
-    }
-    
-    var DisplayString: String { get { return "Oberibar" } }
 }
