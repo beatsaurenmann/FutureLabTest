@@ -15,6 +15,7 @@
 		080695E9202AE65E00AEE939 /* Positioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080695E8202AE65E00AEE939 /* Positioner.swift */; };
 		080695EB202AEA3800AEE939 /* AddressFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080695EA202AEA3800AEE939 /* AddressFinder.swift */; };
 		080695ED202AEA5400AEE939 /* RestaurantFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080695EC202AEA5400AEE939 /* RestaurantFinder.swift */; };
+		1AAD882D53B20927F350DCF4 /* Pods_FutureLabTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A20FECA1B8B0463E39E7129 /* Pods_FutureLabTest.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,9 @@
 		080695E8202AE65E00AEE939 /* Positioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Positioner.swift; sourceTree = "<group>"; };
 		080695EA202AEA3800AEE939 /* AddressFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressFinder.swift; sourceTree = "<group>"; };
 		080695EC202AEA5400AEE939 /* RestaurantFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantFinder.swift; sourceTree = "<group>"; };
+		1A20FECA1B8B0463E39E7129 /* Pods_FutureLabTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FutureLabTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7BC5EAFBB700BC2E7D1731B /* Pods-FutureLabTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FutureLabTest.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FutureLabTest/Pods-FutureLabTest.debug.xcconfig"; sourceTree = "<group>"; };
+		B658248DDAD220DDFDF839D4 /* Pods-FutureLabTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FutureLabTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-FutureLabTest/Pods-FutureLabTest.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AAD882D53B20927F350DCF4 /* Pods_FutureLabTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +51,8 @@
 			children = (
 				080695D5202AE29F00AEE939 /* FutureLabTest */,
 				080695D4202AE29F00AEE939 /* Products */,
+				EDC46FBEFE626C6A0BDA1224 /* Pods */,
+				E37954B57145C42D8CADBBAD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,6 +80,23 @@
 			path = FutureLabTest;
 			sourceTree = "<group>";
 		};
+		E37954B57145C42D8CADBBAD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A20FECA1B8B0463E39E7129 /* Pods_FutureLabTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EDC46FBEFE626C6A0BDA1224 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A7BC5EAFBB700BC2E7D1731B /* Pods-FutureLabTest.debug.xcconfig */,
+				B658248DDAD220DDFDF839D4 /* Pods-FutureLabTest.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -80,9 +104,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 080695E5202AE29F00AEE939 /* Build configuration list for PBXNativeTarget "FutureLabTest" */;
 			buildPhases = (
+				90450D70B4A95122CF680496 /* [CP] Check Pods Manifest.lock */,
 				080695CF202AE29F00AEE939 /* Sources */,
 				080695D0202AE29F00AEE939 /* Frameworks */,
 				080695D1202AE29F00AEE939 /* Resources */,
+				44E493177587E25218A10928 /* [CP] Embed Pods Frameworks */,
+				63AF2FB06E1E58B520946500 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -139,6 +166,60 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		44E493177587E25218A10928 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-FutureLabTest/Pods-FutureLabTest-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Nominatim/Nominatim.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nominatim.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FutureLabTest/Pods-FutureLabTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		63AF2FB06E1E58B520946500 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FutureLabTest/Pods-FutureLabTest-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		90450D70B4A95122CF680496 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FutureLabTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		080695CF202AE29F00AEE939 /* Sources */ = {
@@ -284,6 +365,7 @@
 		};
 		080695E6202AE29F00AEE939 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A7BC5EAFBB700BC2E7D1731B /* Pods-FutureLabTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -299,6 +381,7 @@
 		};
 		080695E7202AE29F00AEE939 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B658248DDAD220DDFDF839D4 /* Pods-FutureLabTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var positionButton: UIButton!
     var positioner = Positioner()
     
-    @IBOutlet weak var addressLabel: UILabel!
+    @IBOutlet weak var adressField: UITextView!
     @IBOutlet weak var addressButton: UIButton!
     var addressFinder = AddressFinder()
     
@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var restaurantButton: UIButton!
     var restaurantFinder = RestaurantFinder()
     
+    var lastPosition: Position?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,38 +34,53 @@ class ViewController: UIViewController {
         positionLabel.text = "updating..."
         positionLabel.textColor = UIColor.gray
         
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .default).async {
             self.positioner.updatePosition({ p in self.displayPosition(p) }, self.displayPositionError)
         }
     }
     
     func displayPosition(_ position: Position) {
-        positionLabel.text = position.DisplayString
-        positionLabel.textColor = UIColor.black
+        DispatchQueue.main.async {
+            self.positionLabel.text = position.DisplayString
+            self.positionLabel.textColor = UIColor.black
+        
+            self.lastPosition = position
+        }
     }
     
     func displayPositionError() {
-        positionLabel.text = "something went wrong"
-        positionLabel.textColor = UIColor.red
+        DispatchQueue.main.async {
+            self.positionLabel.text = "something went wrong"
+            self.positionLabel.textColor = UIColor.red
+        }
     }
     
     @IBAction func updateAddressClicked(_ sender: Any) {
-        addressLabel.text = "updating..."
-        addressLabel.textColor = UIColor.gray
+        adressField.text = "updating..."
+        adressField.textColor = UIColor.gray
         
         DispatchQueue.main.async {
-            self.addressFinder.updatePosition({ p in self.displayAddress(p) }, self.displayAddressError)
+            self.addressFinder.updatePosition(self.lastPosition!,
+                { p in
+                    self.displayAddress(p)
+                },
+                self.displayAddressError
+            )
         }
     }
     
     func displayAddress(_ address: Address) {
-        addressLabel.text = address.DisplayString
-        addressLabel.textColor = UIColor.black
+        DispatchQueue.main.async {
+            self.adressField.text = address.DisplayString
+            self.adressField.textColor = UIColor.black
+        }
     }
     
     func displayAddressError() {
-        addressLabel.text = "something went wrong"
-        addressLabel.textColor = UIColor.red
+        DispatchQueue.main.async {
+            self.adressField.text = "something went wrong"
+            self.adressField.textColor = UIColor.red
+        }
     }
     
     @IBAction func updateRestaurantClicked(_ sender: Any) {
@@ -77,24 +93,19 @@ class ViewController: UIViewController {
     }
     
     func displayRestaurant(_ restaurantInfo: RestaurantInfo) {
-        restaurantLabel.text = restaurantInfo.DisplayString
-        restaurantLabel.textColor = UIColor.black
+        DispatchQueue.main.async {
+            self.restaurantLabel.text = restaurantInfo.DisplayString
+            self.restaurantLabel.textColor = UIColor.black
+        }
     }
     
     func displayRestaurantError() {
-        restaurantLabel.text = "something went wrong"
-        restaurantLabel.textColor = UIColor.red
+        DispatchQueue.main.async {
+            self.restaurantLabel.text = "something went wrong"
+            self.restaurantLabel.textColor = UIColor.red
+        }
     }
     
-}
-
-
-class Address {
-    
-    init() {
-    }
-    
-    var DisplayString: String { get { return "Talwiesenstrasse 36, 8404 Winterthur" } }
 }
 
 

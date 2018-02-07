@@ -7,30 +7,54 @@
 //
 
 import Foundation
+import Nominatim
+
+class Address {
+    var country: String?
+    var city: String?
+    var road: String?
+    var number: String?
+    
+    init() {
+    }
+    
+    var DisplayString: String
+    {
+        get {
+            if let no = number {
+                return "\(road!) \(no), \(city!), \(country!)"
+            }
+            return "\(road!), \(city!), \(country!)"
+        }
+    }
+}
 
 class AddressFinder {
-    
-    var lastPosition: Address?
     
     init() {
         
     }
     
-    func updatePosition(_ success: (Address) -> (), _ fail: () -> ()) {
-        lastPosition = getCurrentPosition()
+    func updatePosition(_ position: Position, _ success: @escaping (Address) -> (), _ fail: @escaping () -> ()) {
         
-        sleep(3)
-        
-        if let position = lastPosition {
-            success(position)
-        } else {
-            fail()
-        }
+        Nominatim.getLocation(fromLatitude: position.latitude!, longitude: position.longitude!, completion: {(error, location) -> Void in
+            
+            if error != nil {
+                fail()
+            }
+            
+            if location != nil {
+                var address = Address()
+                address.country = location!.country
+                address.city = location!.city
+                address.road = location!.road
+                address.number = location!.houseNumber
+                
+                success(address)
+                
+            } else {
+                fail()
+            }
+        })
     }
-    
-    
-    func getCurrentPosition() -> Address? {
-        return Address()
-    }
-    
 }
