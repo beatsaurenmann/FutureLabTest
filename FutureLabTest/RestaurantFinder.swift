@@ -17,15 +17,29 @@ class RestaurantGuide {
     init() {
     }
     
-    var DisplayString: String
-    {
-        get {
-            var result = ""
-            for rest in restaurants {
-                result += rest.DisplayString + "\n\n"
-            }
-            return result
+    func getListOfRestaurants(for location: CLLocation) -> String {
+        var restaurantsWithDistance = [(Int, String)]()
+        
+        for restaurant in restaurants {
+            restaurantsWithDistance.append((getDistance(of: restaurant, to: location), restaurant.DisplayString))
         }
+        
+        restaurantsWithDistance = restaurantsWithDistance.filter() { item in item.0 < 1000 }
+        
+        restaurantsWithDistance.sort { (first, second) -> Bool in
+            return first.0 < second.0
+        }
+        
+        var result = ""
+        for (dist, rest) in restaurantsWithDistance {
+            result += "\(dist)m\n\(rest)\n\n"
+        }
+        return result
+    }
+    
+    func getDistance(of restaurant: Restaurant, to location: CLLocation) -> Int {
+        let restaurantLocation = CLLocation(latitude: restaurant.latitude as CLLocationDegrees, longitude: restaurant.longitude as CLLocationDegrees)
+        return Int(restaurantLocation.distance(from: location))
     }
 }
 
@@ -70,7 +84,7 @@ class RestaurantFinder {
         
         let centerLong = Double(position.coordinate.longitude)
         let centerLat = Double(position.coordinate.latitude)
-        let offset = 0.01
+        let offset = 0.02
         let geoConstraint = "[bbox=\(centerLong - offset),\(centerLat - offset),\(centerLong + offset),\(centerLat + offset)]"
         
         let httpRequest = "https://www.overpass-api.de/api/xapi?node[amenity=restaurant]\(geoConstraint)"

@@ -98,7 +98,7 @@ class ViewController: UIViewController {
             latestSearchLocation = currentLocation
             latestSearch = Date()
             updateAddress()
-            updateCachedRestaurants()
+            updateRestaurantGuide()
         }
     }
     
@@ -107,11 +107,15 @@ class ViewController: UIViewController {
     @IBOutlet weak var adressField: UITextView!
     
     func updateAddress() {
+        guard let loc = currentLocation else {
+            return
+        }
+        
         adressField.text = "updating..."
         adressField.textColor = UIColor.gray
         
         DispatchQueue.global(qos: .default).async {
-            AddressFinder.findAddress(self.currentLocation!, { p in self.displayAddress(p) }, self.displayAddressError)
+            AddressFinder.findAddress(loc, { p in self.displayAddress(p) }, self.displayAddressError)
         }
     }
     
@@ -133,18 +137,29 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var restaurantField: UITextView!
     
-    func updateCachedRestaurants() {
+    var currentGuide: RestaurantGuide?
+    
+    func updateRestaurantGuide() {
+        guard let loc = currentLocation else {
+            return
+        }
+        
         restaurantField.text = "updating..."
         restaurantField.textColor = UIColor.gray
         
         DispatchQueue.global(qos: .default).async {
-            RestaurantFinder.updatePosition(self.currentLocation!, { p in self.displayRestaurant(p) }, self.displayRestaurantError )
+            RestaurantFinder.updatePosition(loc, { p in self.displayRestaurants(p, loc) }, self.displayRestaurantError )
         }
     }
     
-    func displayRestaurant(_ restaurantGuide: RestaurantGuide) {
+    func displayRestaurants(_ restaurantGuide: RestaurantGuide, _ currentLocation: CLLocation) {
+        currentGuide = restaurantGuide
+        updateRestaurantList(currentLocation)
+    }
+    
+    func updateRestaurantList(_ currentLocation: CLLocation) {
         DispatchQueue.main.async {
-            self.restaurantField.text = restaurantGuide.DisplayString
+            self.restaurantField.text = self.currentGuide!.getListOfRestaurants(for: currentLocation)
             self.restaurantField.textColor = UIColor.black
         }
     }
