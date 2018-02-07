@@ -8,20 +8,13 @@
 
 import UIKit
 import CoreLocation
+import Nominatim
 
 class ViewController: UIViewController {
-    
-    var latestSearchLocation: CLLocation?
-    
-    @IBOutlet weak var adressField: UITextView!
-    @IBOutlet weak var addressButton: UIButton!
-    var addressFinder = AddressFinder()
     
     @IBOutlet weak var restaurantField: UITextView!
     @IBOutlet weak var restaurantButton: UIButton!
     var restaurantFinder = RestaurantFinder()
-    
-    var currentLocation: CLLocation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +27,10 @@ class ViewController: UIViewController {
     
     var positioner = Positioner()
     @IBOutlet weak var locationLabel: UILabel!
+    
+    var currentLocation: CLLocation?
+    var latestSearchLocation: CLLocation?
+    var latestSearch = Date()
     
     @IBAction func updateLocationClicked(_ sender: Any) {
         if positioner.isTracking {
@@ -59,6 +56,8 @@ class ViewController: UIViewController {
         
         locationLabel.text = "n.a."
         locationLabel.textColor = UIColor.gray
+        
+        currentLocation = nil
     }
     
     func displayLocation(_ location: CLLocation) {
@@ -68,6 +67,7 @@ class ViewController: UIViewController {
                 self.locationLabel.textColor = UIColor.black
                 
                 self.currentLocation = location
+                self.triggerSearchUponLocationChange()
             }
         }
     }
@@ -79,36 +79,56 @@ class ViewController: UIViewController {
         }
     }
     
+    func triggerSearchUponLocationChange() {
+        if !positioner.isTracking {
+            return
+        }
+        
+        var searchIsOutdated = false
+        
+        if let currentLocation = currentLocation {
+            if let latestSearchLocation = latestSearchLocation {
+                let coveredDistance: CLLocationDistance = latestSearchLocation.distance(from: currentLocation)
+                if coveredDistance.magnitude > 5 && latestSearch.addingTimeInterval(10) < Date() {
+                    searchIsOutdated = true
+                }
+            } else {
+                searchIsOutdated = true
+            }
+        }
+        
+        if searchIsOutdated {
+            latestSearchLocation = currentLocation
+            latestSearch = Date()
+            updateAddress()
+        }
+    }
+    
     //MARK: Closest address
     
-    @IBAction func updateAddressClicked(_ sender: Any) {
-        let distanceBetween: CLLocationDistance = latestSearchLocation!.distance(from: currentLocation!)
-        //        distance.text = String(format: "%.2f", distanceBetween)
-        
-        
+    var addressFinder = AddressFinder()
+    
+    @IBOutlet weak var adressField: UITextView!
+    
+    func updateAddress() {
         adressField.text = "updating..."
         adressField.textColor = UIColor.gray
         
         DispatchQueue.global(qos: .default).async {
-            self.addressFinder.updatePosition(self.currentLocation!,
-                { p in
-                    self.displayAddress(p)
-                },
-                self.displayAddressError
-            )
+            self.addressFinder.findAddress(self.currentLocation!, { p in self.displayAddress(p) }, self.displayAddressError)
         }
     }
     
-    func displayAddress(_ address: Address) {
+    func displayAddress(_ address: Location) {
         DispatchQueue.main.async {
             self.adressField.text = address.DisplayString
             self.adressField.textColor = UIColor.black
         }
     }
     
-    func displayAddressError() {
+    func displayAddressError(_ description: String) {
         DispatchQueue.main.async {
-            self.adressField.text = "something went wrong"
+            self.adressField.text = "Error: \(description)"
             self.adressField.textColor = UIColor.red
         }
     }

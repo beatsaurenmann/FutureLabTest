@@ -10,22 +10,37 @@ import Foundation
 import Nominatim
 import CoreLocation
 
-class Address {
-    var country: String?
-    var city: String?
-    var road: String?
-    var number: String?
-    
-    init() {
-    }
-    
+extension Location {
     var DisplayString: String
     {
         get {
-            if let no = number {
-                return "\(road!) \(no), \(city!), \(country!)"
+            var result = ""
+            
+            if let road = road {
+                result += road
+            } else {
+                result += "<unknown road>"
             }
-            return "\(road!), \(city!), \(country!)"
+            
+            if let houseNumber = houseNumber {
+                result += " \(houseNumber)"
+            }
+            
+            result += ", "
+            
+            if let city = city {
+                result += city
+            } else {
+                result += "<unknown city>"
+            }
+            
+            if let country = country {
+                result += " \(country)"
+            } else {
+                result += " <unknown country"
+            }
+            
+            return result
         }
     }
 }
@@ -33,29 +48,22 @@ class Address {
 class AddressFinder {
     
     init() {
-        
     }
     
-    func updatePosition(_ position: CLLocation, _ success: @escaping (Address) -> (), _ fail: @escaping () -> ()) {
+    func findAddress(_ gpsLocation: CLLocation, _ onLocationFound: @escaping (Location) -> (), _ onError: @escaping (String) -> ()) {
         
-        Nominatim.getLocation(fromLatitude: String(position.coordinate.latitude), longitude: String(position.coordinate.longitude), completion: {(error, location) -> Void in
+        Nominatim.getLocation(fromLatitude: String(gpsLocation.coordinate.latitude), longitude: String(gpsLocation.coordinate.longitude)) {
+            (error, location) -> Void in
             
-            if error != nil {
-                fail()
+            if let error = error {
+                onError(error.localizedDescription)
             }
             
-            if location != nil {
-                var address = Address()
-                address.country = location!.country
-                address.city = location!.city
-                address.road = location!.road
-                address.number = location!.houseNumber
-                
-                success(address)
-                
+            if let loc = location {
+                onLocationFound(loc)
             } else {
-                fail()
+                onError("no location could be found")
             }
-        })
+        }
     }
 }

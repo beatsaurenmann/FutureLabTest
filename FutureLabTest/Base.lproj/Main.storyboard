@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,7 +15,7 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="FutureLabTest" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your current position is:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hY3-pw-dIu">
@@ -21,7 +25,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="naE-uw-Q3Q">
-                                <rect key="frame" x="16" y="83" width="568" height="21"/>
+                                <rect key="frame" x="16" y="83" width="343" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -32,13 +36,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Rj-uf-gNb">
-                                <rect key="frame" x="533" y="116" width="51" height="30"/>
-                                <state key="normal" title="Update"/>
-                                <connections>
-                                    <action selector="updateAddressClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="F5b-Ue-qwt"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The closest restaurants are:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="imb-un-YRY">
                                 <rect key="frame" x="16" y="215" width="213" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -46,14 +43,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2uH-lB-FrG">
-                                <rect key="frame" x="533" y="211" width="51" height="30"/>
+                                <rect key="frame" x="308" y="211" width="51" height="30"/>
                                 <state key="normal" title="Update"/>
                                 <connections>
                                     <action selector="updateRestaurantClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="via-NL-tCj"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iLS-IT-GFA">
-                                <rect key="frame" x="16" y="149" width="568" height="58"/>
+                                <rect key="frame" x="16" y="149" width="343" height="58"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="58" id="OHS-Eu-Xvi"/>
@@ -63,14 +60,14 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kqw-qN-LHY">
-                                <rect key="frame" x="487" y="20" width="97" height="30"/>
+                                <rect key="frame" x="262" y="20" width="97" height="30"/>
                                 <state key="normal" title="Start Tracking"/>
                                 <connections>
                                     <action selector="updateLocationClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ayj-Kz-xjB"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95P-Zc-OTT">
-                                <rect key="frame" x="16" y="244" width="568" height="336"/>
+                                <rect key="frame" x="16" y="244" width="343" height="403"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -82,10 +79,7 @@
                             <constraint firstItem="95P-Zc-OTT" firstAttribute="top" secondItem="2uH-lB-FrG" secondAttribute="bottom" constant="3" id="3hz-mA-m8m"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="kqw-qN-LHY" secondAttribute="trailing" constant="16" id="3zQ-yx-3zd"/>
                             <constraint firstItem="imb-un-YRY" firstAttribute="top" secondItem="iLS-IT-GFA" secondAttribute="bottom" constant="8" id="745-xq-vrI"/>
-                            <constraint firstItem="8Rj-uf-gNb" firstAttribute="top" secondItem="naE-uw-Q3Q" secondAttribute="bottom" constant="12" id="C9Z-Gc-y9H"/>
                             <constraint firstItem="Abc-bz-3cQ" firstAttribute="top" secondItem="naE-uw-Q3Q" secondAttribute="bottom" constant="16" id="HZb-sq-ecc"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8Rj-uf-gNb" secondAttribute="trailing" constant="16" id="I60-ks-O1q"/>
-                            <constraint firstItem="iLS-IT-GFA" firstAttribute="top" secondItem="8Rj-uf-gNb" secondAttribute="bottom" constant="3" id="LnQ-ne-0Sg"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="iLS-IT-GFA" secondAttribute="trailing" constant="16" id="M8R-5v-Dsk"/>
                             <constraint firstItem="hY3-pw-dIu" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="34" id="Nsq-0M-Pok"/>
                             <constraint firstItem="Abc-bz-3cQ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="OEf-hg-aZH"/>
@@ -93,6 +87,7 @@
                             <constraint firstItem="iLS-IT-GFA" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="Uwh-HC-tUf"/>
                             <constraint firstItem="hY3-pw-dIu" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="VeR-er-V88"/>
                             <constraint firstItem="kqw-qN-LHY" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="XlT-5d-n1i"/>
+                            <constraint firstItem="iLS-IT-GFA" firstAttribute="top" secondItem="Abc-bz-3cQ" secondAttribute="bottom" constant="8" id="Xlt-OQ-Jl6"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="naE-uw-Q3Q" secondAttribute="trailing" constant="16" id="b9H-SK-yVD"/>
                             <constraint firstItem="2uH-lB-FrG" firstAttribute="top" secondItem="iLS-IT-GFA" secondAttribute="bottom" constant="4" id="d8j-eu-gca"/>
                             <constraint firstItem="95P-Zc-OTT" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="e7v-ZP-Pcu"/>
@@ -105,7 +100,6 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="addressButton" destination="8Rj-uf-gNb" id="ILv-Wj-tKL"/>
                         <outlet property="adressField" destination="iLS-IT-GFA" id="0YE-1E-biS"/>
                         <outlet property="locationLabel" destination="naE-uw-Q3Q" id="3Ch-Ed-TQu"/>
                         <outlet property="restaurantButton" destination="2uH-lB-FrG" id="7nE-IJ-hkv"/>

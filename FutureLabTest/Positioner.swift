@@ -10,7 +10,7 @@ import Foundation
 import CoreLocation
 
 extension CLLocation {
-    var DisplayString: String { get { return "lat=\(String(format: "%.4f", coordinate.latitude)), long=\(String(format: "%.4f", coordinate.longitude))" } }
+    var DisplayString: String { get { return "lat=\(String(format: "%.7f", coordinate.latitude)), long=\(String(format: "%.7f", coordinate.longitude))" } }
 }
 
 class Positioner : NSObject, CLLocationManagerDelegate {
