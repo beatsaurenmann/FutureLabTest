@@ -20,6 +20,7 @@ class Positioner : NSObject, CLLocationManagerDelegate {
     var isTracking = false
     
     var onLocationChanged: (CLLocation) -> () = { location in }
+    var onHeadingChanged: (CLHeading) -> () = { heading in }
     var onErrorOccurred: (String) -> () = { message in }
     
     override init() {
@@ -30,10 +31,12 @@ class Positioner : NSObject, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
     }
     
-    func startTracking(_ success: @escaping (CLLocation) -> (), _ fail: @escaping (String) -> ()) {
+    func startTracking(_ success: @escaping (CLLocation) -> (), _ heading: @escaping (CLHeading) -> (), _ fail: @escaping (String) -> ()) {
         locationManager.startUpdatingLocation()
+        locationManager.startUpdatingHeading()
         onLocationChanged = success
         onErrorOccurred = fail
+        onHeadingChanged = heading
         isTracking = true
     }
     
@@ -46,6 +49,11 @@ class Positioner : NSObject, CLLocationManagerDelegate {
     {
         let latestLocation: CLLocation = locations[locations.count - 1]
         onLocationChanged(latestLocation)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading)
+    {
+        onHeadingChanged(newHeading)
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

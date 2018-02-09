@@ -17,6 +17,22 @@ class RestaurantGuide {
     init() {
     }
     
+    func getRestaurants(for location: CLLocation) -> [(Int, String, String, CLLocation)] {
+        var restaurantsWithDistance = [(Int, String, String, CLLocation)]()
+        
+        for restaurant in restaurants {
+            restaurantsWithDistance.append((getDistance(of: restaurant, to: location), restaurant.restaurantName, restaurant.Address, restaurant.location))
+        }
+        
+        restaurantsWithDistance = restaurantsWithDistance.filter() { item in item.0 < 1000 }
+        
+        restaurantsWithDistance.sort { (first, second) -> Bool in
+            return first.0 < second.0
+        }
+        
+        return restaurantsWithDistance
+    }
+    
     func getListOfRestaurants(for location: CLLocation) -> String {
         var restaurantsWithDistance = [(Int, String)]()
         
@@ -38,8 +54,7 @@ class RestaurantGuide {
     }
     
     func getDistance(of restaurant: Restaurant, to location: CLLocation) -> Int {
-        let restaurantLocation = CLLocation(latitude: restaurant.latitude as CLLocationDegrees, longitude: restaurant.longitude as CLLocationDegrees)
-        return Int(restaurantLocation.distance(from: location))
+        return Int(restaurant.location.distance(from: location))
     }
 }
 
@@ -56,7 +71,13 @@ class Restaurant {
         self.longitude = lon
     }
     
-    var DisplayString: String
+    var location: CLLocation {
+        get {
+            return CLLocation(latitude: latitude as CLLocationDegrees, longitude: longitude as CLLocationDegrees)
+        }
+    }
+    
+    var Address: String
     {
         get {
             var address = ""
@@ -68,7 +89,14 @@ class Restaurant {
             } else {
                 address = "<address unknown>"
             }
-            return "\(restaurantName) \n\(address)"
+            return address
+        }
+    }
+    
+    var DisplayString: String
+    {
+        get {
+            return "\(restaurantName) \n\(Address)"
         }
     }
 }
