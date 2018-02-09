@@ -85,7 +85,18 @@ class ViewController: UIViewController, UITableViewDataSource {
     
     func headingChanged(_ heading: CLHeading) {
         currentHeading = heading
+        
+        DispatchQueue.main.async {
+            let transform = CGAffineTransform(rotationAngle: CGFloat(-heading.magneticHeading * .pi/180))
+            self.compassArrowView.transform = transform
+            
+            for view in self.updatableViews {
+                view.setNeedsDisplay()
+            }
+        }
     }
+    
+    var updatableViews = [UIView]()
     
     func triggerSearchUponLocationChange() {
         if !positioner.isTracking {
@@ -164,6 +175,7 @@ class ViewController: UIViewController, UITableViewDataSource {
     }
     
     func updateRestaurantList(_ currentLocation: CLLocation) {
+        updatableViews.removeAll()
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -190,7 +202,8 @@ class ViewController: UIViewController, UITableViewDataSource {
         cell.distLabel?.text = "\(rest.0)m"
         cell.location = rest.3
         cell.currentLocation = currentLocation
-        cell.currentHeading = currentHeading
+        cell.currentHeading = { () in return self.currentHeading }
+        updatableViews.append(cell)
         return cell
     }
 }
@@ -198,6 +211,13 @@ class ViewController: UIViewController, UITableViewDataSource {
 class RestaurantTableViewCell : UITableViewCell {
     
     override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+        
+        guard let loc = currentLocation, let heading = currentHeading(), let target = location else {
+            return
+        }
+        
+        rotate(loc, heading, target)
     }
     
     @IBOutlet weak var nameLabel: UILabel!
@@ -206,12 +226,51 @@ class RestaurantTableViewCell : UITableViewCell {
     @IBOutlet weak var arrowView: ArrowView!
     
     var currentLocation: CLLocation?
-    var currentHeading: CLHeading? {
-        didSet {
-            self.setNeedsLayout()
+    var currentHeading: () -> CLHeading? = { () in return nil }
+    var location: CLLocation?
+    
+    func rotate(_ loc: CLLocation, _ heading: CLHeading, _ target: CLLocation) {
+        let northAngleR = CGFloat(-heading.magneticHeading * .pi/180)
+        
+        let angleFromNorthToTargetR = loc.bearingToLocationRadian(target)
+        
+        DispatchQueue.main.async {
+            self.arrowView.transform = CGAffineTransform(rotationAngle: northAngleR + angleFromNorthToTargetR)
         }
     }
-    var location: CLLocation?
+}
+
+public extension CLLocation {
+    func bearingToLocationRadian(_ destinationLocation: CLLocation) -> CGFloat {
+        
+        let lat1 = self.coordinate.latitude.degreesToRadians
+        let lon1 = self.coordinate.longitude.degreesToRadians
+        
+        let lat2 = destinationLocation.coordinate.latitude.degreesToRadians
+        let lon2 = destinationLocation.coordinate.longitude.degreesToRadians
+        
+        let dLon = lon2 - lon1
+        
+        let y = sin(dLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        let radiansBearing = atan2(y, x)
+        
+        return CGFloat(radiansBearing)
+    }
+    
+    func bearingToLocationDegrees(destinationLocation: CLLocation) -> CGFloat {
+        return bearingToLocationRadian(destinationLocation).radiansToDegrees
+    }
+}
+
+extension CGFloat {
+    var degreesToRadians: CGFloat { return self * .pi / 180 }
+    var radiansToDegrees: CGFloat { return self * 180 / .pi }
+}
+
+private extension Double {
+    var degreesToRadians: Double { return Double(CGFloat(self).degreesToRadians) }
+    var radiansToDegrees: Double { return Double(CGFloat(self).radiansToDegrees) }
 }
 
 class ArrowView: UIView {
