@@ -12,64 +12,61 @@ import SwiftyXMLParser
 import CoreLocation
 
 class RestaurantGuide {
-    var restaurants = [Restaurant]()
+    
+    private let maximalDistance = 1000
     
     init() {
     }
     
-    func getRestaurants(for location: CLLocation) -> [(Int, String, String, CLLocation)] {
-        var restaurantsWithDistance = [(Int, String, String, CLLocation)]()
-        
-        for restaurant in restaurants {
-            restaurantsWithDistance.append((getDistance(of: restaurant, to: location), restaurant.restaurantName, restaurant.Address, restaurant.location))
+    var restaurants = Set<Restaurant>()
+    
+    var restaurantsWithinReach = [(Int, Restaurant)]()
+    
+    var userLocation: CLLocation? {
+        didSet {
+            guard let newLocation = userLocation else {
+                return
+            }
+            
+            restaurantsWithinReach.removeAll()
+            for restaurant in restaurants {
+                let distance = getDistance(of: restaurant, to: newLocation)
+                if distance <= maximalDistance {
+                    restaurantsWithinReach.append((distance, restaurant))
+                }
+            }
+            restaurantsWithinReach.sort { (first, second) -> Bool in
+                return first.0 < second.0
+            }
         }
-        
-        restaurantsWithDistance = restaurantsWithDistance.filter() { item in item.0 < 1000 }
-        
-        restaurantsWithDistance.sort { (first, second) -> Bool in
-            return first.0 < second.0
-        }
-        
-        return restaurantsWithDistance
     }
     
-    func getListOfRestaurants(for location: CLLocation) -> String {
-        var restaurantsWithDistance = [(Int, String)]()
-        
-        for restaurant in restaurants {
-            restaurantsWithDistance.append((getDistance(of: restaurant, to: location), restaurant.DisplayString))
-        }
-        
-        restaurantsWithDistance = restaurantsWithDistance.filter() { item in item.0 < 1000 }
-        
-        restaurantsWithDistance.sort { (first, second) -> Bool in
-            return first.0 < second.0
-        }
-        
-        var result = ""
-        for (dist, rest) in restaurantsWithDistance {
-            result += "\(dist)m\n\(rest)\n\n"
-        }
-        return result
-    }
-    
-    func getDistance(of restaurant: Restaurant, to location: CLLocation) -> Int {
+    private func getDistance(of restaurant: Restaurant, to location: CLLocation) -> Int {
         return Int(restaurant.location.distance(from: location))
     }
 }
 
-class Restaurant {
+class Restaurant : Hashable {
+    
+    var id: Int
     var latitude: Double
     var longitude: Double
     
-    var restaurantName: String = "Nameless Restaurant"
-    var street: String?
-    var houseNumber: String?
+    var restaurantName: String = "<no name available>"
     
-    init(_ lat: Double, _ lon: Double) {
+    var attributes = [(String, String)]()
+    
+    init(_ id: Int, _ lat: Double, _ lon: Double) {
+        self.id = id
         self.latitude = lat
         self.longitude = lon
     }
+    
+    static func ==(left: Restaurant, right: Restaurant) -> Bool {
+        return left.id == right.id
+    }
+    
+    var hashValue: Int { get { return id } }
     
     var location: CLLocation {
         get {
@@ -80,16 +77,7 @@ class Restaurant {
     var Address: String
     {
         get {
-            var address = ""
-            if let street = street {
-                address = street
-                if let houseNumber = houseNumber {
-                    address += " \(houseNumber)"
-                }
-            } else {
-                address = "<address unknown>"
-            }
-            return address
+            return "<address unknown>"
         }
     }
     
@@ -102,7 +90,7 @@ class Restaurant {
 }
 
 class RestaurantFinder {
-    static func updatePosition(_ position: CLLocation, _ onRestaurantsFound: @escaping (RestaurantGuide) -> (), _ onError: @escaping (String) -> ()) {
+    static func updatePosition(_ position: CLLocation, _ onRestaurantsFound: @escaping ([Restaurant]) -> (), _ onError: @escaping (String) -> ()) {
         
         let downloadDestination: DownloadRequest.DownloadFileDestination = { _, _ in
             let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -129,10 +117,10 @@ class RestaurantFinder {
                 let xmlText = try String(contentsOf: response.destinationURL!, encoding: .utf8)
                 let xml = try XML.parse(xmlText)
                 
-                let restaurantGuide = parseXML(xml)
+                let restaurants = parseXML(xml)
                 
-                if restaurantGuide.restaurants.count > 0 {
-                    onRestaurantsFound(restaurantGuide)
+                if restaurants.count > 0 {
+                    onRestaurantsFound(restaurants)
                 } else {
                     onError("no Restaurants found")
                 }
@@ -144,30 +132,37 @@ class RestaurantFinder {
         }
     }
     
-    static func parseXML(_ xml: XML.Accessor) -> RestaurantGuide {
-        let guide = RestaurantGuide()
+    static func parseXML(_ xml: XML.Accessor) -> [Restaurant] {
+        var restaurants = [Restaurant]()
         for info in xml["osm", "node"] {
+            var id: Int?
             var lat, lon: Double?
             
             for (key, value) in info.attributes {
+                if key == "id" { if let l = Int(value) { id = l } }
                 if key == "lat" { if let l = Double(value) { lat = l } }
                 if key == "lon" { if let l = Double(value) { lon = l } }
             }
             
-            guard let latitude = lat, let longitude = lon else {
+            guard let objectId = id, let latitude = lat, let longitude = lon else {
                 continue
             }
             
-            let restaurant = Restaurant(latitude, longitude)
+            let restaurant = Restaurant(objectId, latitude, longitude)
             
             for tag in info["tag"] {
-                if tag.attributes["k"] == "name" { restaurant.restaurantName = tag.attributes["v"]! }
-                if tag.attributes["k"] == "addr:street" { restaurant.street = tag.attributes["v"]! }
-                if tag.attributes["k"] == "addr:housenumber" { restaurant.houseNumber = tag.attributes["v"]! }
+                if tag.attributes["k"] == "name" {
+                    restaurant.restaurantName = tag.attributes["v"]!
+                } else {
+                    guard let key = tag.attributes["k"], let value = tag.attributes["v"] else {
+                        continue
+                    }
+                    restaurant.attributes.append((key, value))
+                }
             }
             
-            guide.restaurants.append(restaurant)
+            restaurants.append(restaurant)
         }
-        return guide
+        return restaurants
     }
 }
