@@ -11,7 +11,23 @@ import Foundation
 import CoreLocation
 
 extension CLLocation {
-    var DisplayString: String { get { return "lat=\(String(format: "%.7f", coordinate.latitude)), long=\(String(format: "%.7f", coordinate.longitude))" } }
+    var DisplayString: String {
+        get {
+            return "\(String(format: "%.7f", coordinate.latitude)) \(HemisphereLabelNS) / \(String(format: "%.7f", coordinate.longitude)) \(HemisphereLabelEW)"
+        }
+    }
+    
+    var HemisphereLabelNS : String {
+        get {
+            return coordinate.latitude > 0 ? "N" : "S"
+        }
+    }
+    
+    var HemisphereLabelEW : String {
+        get {
+            return coordinate.longitude > 0 ? "E" : "W"
+        }
+    }
 }
 
 class Navigator : NSObject, CLLocationManagerDelegate {
@@ -30,12 +46,15 @@ class Navigator : NSObject, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
     }
     
-    func startTracking(_ success: @escaping (CLLocation) -> (), _ heading: @escaping (CLHeading) -> (), _ fail: @escaping (String) -> ()) {
+    func startTracking(_ onLocationChanged: @escaping (CLLocation) -> (),
+                       _ onHeadingChanged: @escaping (CLHeading) -> (),
+                       _ onErrorOccurred: @escaping (String) -> ()) {
+        self.onLocationChanged = onLocationChanged
+        self.onHeadingChanged = onHeadingChanged
+        self.onErrorOccurred = onErrorOccurred
+        
         locationManager.startUpdatingLocation()
         locationManager.startUpdatingHeading()
-        onLocationChanged = success
-        onErrorOccurred = fail
-        onHeadingChanged = heading
     }
     
     func stopTracking() {

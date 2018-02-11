@@ -19,6 +19,7 @@ class RestaurantTableViewController: UITableViewController {
     func clearRows() {
         DispatchQueue.main.async {
             let previousRestaurantsCount = self.restaurants.count
+            self.restaurants.removeAll()
             
             self.tableView.beginUpdates()
             if previousRestaurantsCount > 0 {

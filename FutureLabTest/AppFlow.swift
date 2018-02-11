@@ -19,6 +19,8 @@ protocol IAppFlow {
 
 class AppFlow : IAppFlow {
     
+    private let maximalRestaurantDistanceFromUser: Double = 1000
+    
     private let viewController: ViewController
     private let tableController: RestaurantTableViewController
     
@@ -76,7 +78,7 @@ class AppFlow : IAppFlow {
         
         tableController.clearRows()
         
-        let restaurants = collection.within(1000, of: userLocation!)
+        let restaurants = collection.within(maximalRestaurantDistanceFromUser, of: userLocation!)
         tableController.display(restaurants)
         
         viewController.setControlsToRestaurantRequestEnded()
