@@ -11,41 +11,6 @@ import Alamofire
 import SwiftyXMLParser
 import CoreLocation
 
-class RestaurantGuide {
-    
-    private let maximalDistance = 1000
-    
-    init() {
-    }
-    
-    var restaurants = Set<Restaurant>()
-    
-    var restaurantsWithinReach = [(Int, Restaurant)]()
-    
-    var userLocation: CLLocation? {
-        didSet {
-            guard let newLocation = userLocation else {
-                return
-            }
-            
-            restaurantsWithinReach.removeAll()
-            for restaurant in restaurants {
-                let distance = getDistance(of: restaurant, to: newLocation)
-                if distance <= maximalDistance {
-                    restaurantsWithinReach.append((distance, restaurant))
-                }
-            }
-            restaurantsWithinReach.sort { (first, second) -> Bool in
-                return first.0 < second.0
-            }
-        }
-    }
-    
-    private func getDistance(of restaurant: Restaurant, to location: CLLocation) -> Int {
-        return Int(restaurant.location.distance(from: location))
-    }
-}
-
 class Restaurant : Hashable {
     
     var id: Int

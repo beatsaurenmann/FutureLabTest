@@ -19,14 +19,14 @@ class RestaurantsFlow {
     var nextLocation: CLLocation?
     
     var onRequestStarted: () -> ()
-    var onAddressUpdated: ([Restaurant]) -> ()
+    var onRestaurantsFound: ([Restaurant]) -> ()
     var onErrorOccurred: (String) -> ()
     
     init(_ onRequestStarted: @escaping () -> (),
-         _ onAddressUpdated: @escaping ([Restaurant]) -> (),
+         _ onRestaurantsFound: @escaping ([Restaurant]) -> (),
          _ onErrorOccurred: @escaping (String) -> ()) {
         self.onRequestStarted = onRequestStarted
-        self.onAddressUpdated = onAddressUpdated
+        self.onRestaurantsFound = onRestaurantsFound
         self.onErrorOccurred = onErrorOccurred
     }
     
@@ -61,7 +61,7 @@ class RestaurantsFlow {
             self.onRequestStarted()
             self.latestRequest = Date()
             self.latestLocation = nextLocation
-            RestaurantFinder.updatePosition(nextLocation, self.onAddressUpdated, self.onErrorOccurred)
+            RestaurantFinder.updatePosition(nextLocation, self.onRestaurantsFound, self.onErrorOccurred)
         }
     }
 }

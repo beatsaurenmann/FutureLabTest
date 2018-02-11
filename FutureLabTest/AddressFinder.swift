@@ -11,8 +11,7 @@ import Nominatim
 import CoreLocation
 
 extension Location {
-    var DisplayString: String
-    {
+    var RoadDisplayString: String {
         get {
             var result = ""
             
@@ -26,7 +25,13 @@ extension Location {
                 result += " \(houseNumber)"
             }
             
-            result += ", "
+            return result
+        }
+    }
+    
+    var CityDisplayString: String {
+        get {
+            var result = ""
             
             if let city = city {
                 result += city

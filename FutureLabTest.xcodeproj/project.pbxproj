@@ -19,6 +19,7 @@
 		083B9198202F2B010056F7E7 /* AddressFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083B9197202F2B010056F7E7 /* AddressFlow.swift */; };
 		083B919A202F2B470056F7E7 /* RestaurantsFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083B9199202F2B470056F7E7 /* RestaurantsFlow.swift */; };
 		083B919C202F2D8A0056F7E7 /* NavigationFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083B919B202F2D8A0056F7E7 /* NavigationFlow.swift */; };
+		08BEF95D202F6A9A00096AB3 /* RestaurantTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BEF95C202F6A9A00096AB3 /* RestaurantTableViewController.swift */; };
 		1AAD882D53B20927F350DCF4 /* Pods_FutureLabTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A20FECA1B8B0463E39E7129 /* Pods_FutureLabTest.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		083B9197202F2B010056F7E7 /* AddressFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressFlow.swift; sourceTree = "<group>"; };
 		083B9199202F2B470056F7E7 /* RestaurantsFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantsFlow.swift; sourceTree = "<group>"; };
 		083B919B202F2D8A0056F7E7 /* NavigationFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationFlow.swift; sourceTree = "<group>"; };
+		08BEF95C202F6A9A00096AB3 /* RestaurantTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantTableViewController.swift; sourceTree = "<group>"; };
 		1A20FECA1B8B0463E39E7129 /* Pods_FutureLabTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FutureLabTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7BC5EAFBB700BC2E7D1731B /* Pods-FutureLabTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FutureLabTest.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FutureLabTest/Pods-FutureLabTest.debug.xcconfig"; sourceTree = "<group>"; };
 		B658248DDAD220DDFDF839D4 /* Pods-FutureLabTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FutureLabTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-FutureLabTest/Pods-FutureLabTest.release.xcconfig"; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			children = (
 				080695D6202AE29F00AEE939 /* AppDelegate.swift */,
 				080695D8202AE29F00AEE939 /* ViewController.swift */,
+				08BEF95C202F6A9A00096AB3 /* RestaurantTableViewController.swift */,
 				080695DA202AE29F00AEE939 /* Main.storyboard */,
 				080695DD202AE29F00AEE939 /* Assets.xcassets */,
 				080695DF202AE29F00AEE939 /* LaunchScreen.storyboard */,
@@ -244,6 +247,7 @@
 			files = (
 				080695EB202AEA3800AEE939 /* AddressFinder.swift in Sources */,
 				083B9198202F2B010056F7E7 /* AddressFlow.swift in Sources */,
+				08BEF95D202F6A9A00096AB3 /* RestaurantTableViewController.swift in Sources */,
 				082CC02A202E77DA003B7A7D /* AppFlow.swift in Sources */,
 				080695D9202AE29F00AEE939 /* ViewController.swift in Sources */,
 				083B919A202F2B470056F7E7 /* RestaurantsFlow.swift in Sources */,
@@ -389,7 +393,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8935AMXN8U;
+				DEVELOPMENT_TEAM = 84LS53V83M;
 				INFOPLIST_FILE = FutureLabTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = undefined.FutureLabTest;
@@ -405,7 +409,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8935AMXN8U;
+				DEVELOPMENT_TEAM = 84LS53V83M;
 				INFOPLIST_FILE = FutureLabTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = undefined.FutureLabTest;
