@@ -12,7 +12,7 @@ import Nominatim
 
 class ViewController: UIViewController {
     
-    var appFlow: AppFlow!
+    var appFlow: IAppFlow!
     
     var tableViewController = RestaurantTableViewController()
     
@@ -59,8 +59,9 @@ class ViewController: UIViewController {
         }
     }
     
-    func updateLocationLabel(_ newLocation: CLLocation) {
+    func updateLocationLabel() {
         DispatchQueue.main.async {
+            let newLocation = self.appFlow.userLocation!
             self.locationLabel.text = newLocation.DisplayString
             
             self.accuracyLabel.text = "±\(Int(newLocation.horizontalAccuracy))m"

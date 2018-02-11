@@ -12,64 +12,63 @@ import Nominatim
 
 class RestaurantTableViewController: UITableViewController {
     
-    var appFlow: AppFlow!
+    var appFlow: IAppFlow!
     
-    var restaurants = [RestaurantWithDistance]()
+    var restaurants = [Restaurant]()
     
-    func insertRestaurantAtIndex() {
-        
-    }
-    
-    func removeRestaurantAtIndex() {
-        
-    }
-    
-    func sort(_ objectsBeforeSort: [Restaurant], _ objects: [Restaurant]) {
-        tableView.beginUpdates()
-        for i in 0..<objects.count {
-            // newRow will get the new row of an object.  i is the old row.
-            let newRow: Int = objects.index(of: objectsBeforeSort[i])!
-            tableView.moveRow(at: IndexPath(row: i, section: 0), to: IndexPath(row: newRow, section: 0))
-        }
-        tableView.endUpdates()
-    }
-    
-    func update(_ all: Set<RestaurantWithDistance>, _ new: Set<Restaurant>, _ obsolete: Set<Restaurant>) {
-        restaurants = all.sorted() { (first, second) -> Bool in
-            return first.distance < second.distance
-        }
-        
-        tableView.beginUpdates()
-        let previousRowCount = tableView.numberOfRows(inSection: 0)-1
-        if previousRowCount > 0 {
-            for i in 0...previousRowCount {
-                tableView.deleteRows(at: [IndexPath(row: i, section: 0)], with: .fade)
+    func clearRows() {
+        DispatchQueue.main.async {
+            let previousRestaurantsCount = self.restaurants.count
+            
+            self.tableView.beginUpdates()
+            if previousRestaurantsCount > 0 {
+                for i in 0...previousRestaurantsCount-1 {
+                    self.tableView.deleteRows(at: [IndexPath(row: i, section: 0)], with: .fade)
+                }
             }
+            self.tableView.endUpdates()
         }
-        
-        let newRowCount = restaurants.count-1
-        if newRowCount > 0 {
-            for i in 0...newRowCount {
-                tableView.insertRows(at: [IndexPath(row: i, section: 0)], with: .fade)
-            }
-        }
-        tableView.endUpdates()
     }
     
-    func updateDistances(_ newLocation: CLLocation) {
+    func display(_ restaurants: [Restaurant]) {
+        DispatchQueue.main.async {
+            self.restaurants = restaurants
+            
+            self.tableView.beginUpdates()
+            if self.restaurants.count > 0 {
+                for i in 0...self.restaurants.count-1 {
+                    self.tableView.insertRows(at: [IndexPath(row: i, section: 0)], with: .fade)
+                }
+            }
+            self.tableView.endUpdates()
+        }
+    }
+    
+    func refreshCells() {
         DispatchQueue.main.async {
             for cell in self.tableView.visibleCells {
-                (cell as! RestaurantTableViewCell).currentLocation = newLocation
+                cell.setNeedsDisplay()
             }
+            self.sortCells()
         }
     }
     
-    func udpateCompasses(_ newHeading: CLHeading) {
+    func sortCells() {
         DispatchQueue.main.async {
-            for view in self.tableView.visibleCells {
-                (view as! RestaurantTableViewCell).currentHeading = newHeading
-            }
+            let restaurantsBefore = Array(self.restaurants)
+            let arrayToDist = restaurantsBefore.toDictionary() { $0.location.distance(from: self.appFlow.userLocation!) }
+            self.restaurants = restaurantsBefore.sorted() { arrayToDist[$0]! < arrayToDist[$1]! }
+            self.sort(restaurantsBefore, self.restaurants)
         }
+    }
+    
+    private func sort(_ objectsBeforeSort: [Restaurant], _ objectsNow: [Restaurant]) {
+        self.tableView.beginUpdates()
+        for i in 0..<objectsNow.count {
+            let newRow: Int = objectsNow.index(of: objectsBeforeSort[i])!
+            self.tableView.moveRow(at: IndexPath(row: i, section: 0), to: IndexPath(row: newRow, section: 0))
+        }
+        self.tableView.endUpdates()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -78,9 +77,8 @@ class RestaurantTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RestaurantCell", for: indexPath) as! RestaurantTableViewCell
-        let restWithDist = restaurants[indexPath.row]
-        cell.restaurant = restWithDist.restaurant
-        cell.currentLocation = appFlow.userLocation
+        cell.appFlow = appFlow
+        cell.restaurant = restaurants[indexPath.row]
         cell.setNeedsDisplay()
         return cell
     }
@@ -111,44 +109,35 @@ class RestaurantTableViewController: UITableViewController {
 }
 
 class RestaurantTableViewCell : UITableViewCell, UITableViewDataSource, UITableViewDelegate {
-    override func draw(_ dirtyRect: CGRect) {
-        super.draw(dirtyRect)
-        attributesTable.dataSource = self
-        attributesTable.delegate = self
-        
-        rotate()
-    }
+    
+    var appFlow: IAppFlow!
+    var restaurant: Restaurant! { didSet { nameLabel.text = restaurant.restaurantName } }
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var distLabel: UILabel!
+    @IBOutlet weak var arrowView: ArrowView!
     @IBOutlet weak var attributesTable: UITableView!
     
-    var restaurant: Restaurant! {
-        didSet {
-            nameLabel.text = restaurant.restaurantName
-            
-            DispatchQueue.main.async {
-                self.attributesTable.reloadData()
-            }
-        }
+    override func draw(_ dirtyRect: CGRect) {
+        super.draw(dirtyRect)
+        
+        updateDistanceLabel()
+        rotate()
     }
     
-    var dist: Double {
-        get {
-            guard let loc = currentLocation else {
-                return 0
-            }
-            return restaurant.location.distance(from: loc)
-        }
+    func updateDistanceLabel() {
+        distLabel.text = "\(Int(getDistanceToUser()))m"
     }
     
-    @IBOutlet weak var arrowView: ArrowView!
-    
-    var currentLocation: CLLocation? { didSet { rotate(); updateDistanceLabel() } }
-    var currentHeading: CLHeading? { didSet { rotate(); updateDistanceLabel() } }
+    func getDistanceToUser() -> Double {
+        guard let loc = appFlow.userLocation else {
+            return 0
+        }
+        return restaurant.location.distance(from: loc)
+    }
     
     func rotate() {
-        guard let loc = currentLocation, let heading = currentHeading else {
+        guard let loc = appFlow.userLocation, let heading = appFlow.userHeading else {
             return
         }
         
@@ -159,10 +148,6 @@ class RestaurantTableViewCell : UITableViewCell, UITableViewDataSource, UITableV
         DispatchQueue.main.async {
             self.arrowView.transform = CGAffineTransform(rotationAngle: northAngleR + angleFromNorthToTargetR)
         }
-    }
-    
-    func updateDistanceLabel() {
-        distLabel.text = "\(Int(dist))m"
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

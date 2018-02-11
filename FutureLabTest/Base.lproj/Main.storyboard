@@ -156,6 +156,10 @@
                                                             </connections>
                                                         </tableViewCell>
                                                     </prototypes>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="85N-CN-Gxb" id="0LF-lk-Iya"/>
+                                                        <outlet property="delegate" destination="85N-CN-Gxb" id="IBB-hg-s76"/>
+                                                    </connections>
                                                 </tableView>
                                             </subviews>
                                         </tableViewCellContentView>

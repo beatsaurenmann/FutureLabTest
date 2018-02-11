@@ -10,7 +10,14 @@ import Foundation
 import CoreLocation
 import Nominatim
 
-class AppFlow {
+protocol IAppFlow {
+    var userLocation: CLLocation? { get }
+    var userHeading: CLHeading? { get }
+    
+    func onStartStopPressed()
+}
+
+class AppFlow : IAppFlow {
     
     private let viewController: ViewController
     private let tableController: RestaurantTableViewController
@@ -20,9 +27,9 @@ class AppFlow {
     private var restaurantsFlow: RestaurantsFlow!
     
     var userLocation: CLLocation?
+    var userHeading: CLHeading?
     
     var collection = RestaurantCollection()
-    var guide = RestaurantGuide()
     
     init(_ viewController: ViewController, _ tableController: RestaurantTableViewController) {
         self.viewController = viewController
@@ -32,7 +39,7 @@ class AppFlow {
             viewController.setControlsToTrackingStarted,
             viewController.setControlsToTrackingEnded,
             onLocationChanged,
-            tableController.udpateCompasses,
+            onLocationChanged,
             viewController.showNavigationError)
         addressFlow = AddressFlow(
             viewController.setControlsToAddressRequestStarted,
@@ -50,11 +57,16 @@ class AppFlow {
     
     func onLocationChanged(_ newLocation: CLLocation) {
         userLocation = newLocation
+        viewController.updateLocationLabel()
+        tableController.refreshCells()
+        
         addressFlow.set(newLocation: newLocation)
         restaurantsFlow.set(newLocation: newLocation)
-        
-        viewController.updateLocationLabel(newLocation)
-        updateRestaurantList(newLocation)
+    }
+    
+    func onLocationChanged(_ newHeading: CLHeading) {
+        userHeading = newHeading
+        tableController.refreshCells()
     }
     
     var currentRestaurants = [Restaurant]()
@@ -62,60 +74,12 @@ class AppFlow {
     func onRestaurantsFound(_ newRestaurants: [Restaurant]) {
         collection.extend(with: newRestaurants)
         
-//        let arrayToDist = Array(collection.restaurants).toDictionary() { $0.location.distance(from: userLocation!) }
-//        let restaurantsWithinReach = collection.restaurants.filter() { arrayToDist[$0]! < Double(1000) }
-//        let sortedRestaurants = restaurantsWithinReach.sorted() { arrayToDist[$0]! < arrayToDist[$1]! }
-//
-//
-//
-//
-//
-//        currentRestaurants = sortedRestaurants
-//
-//
-//
-//
-//
-        let (toBeRemoved, toBeAdded) = guide.update(collection, userLocation!)
-//
-//        for rest in toBeRemoved {
-//            tableController.removeRestaurantAtIndex()
-//        }
-//
-//        for rest in toBeAdded {
-//            tableController.removeRestaurantAtIndex()
-//        }
+        tableController.clearRows()
         
-//        tableController.sort
-        
-        
-        
-        
-        
-        
+        let restaurants = collection.within(1000, of: userLocation!)
+        tableController.display(restaurants)
         
         viewController.setControlsToRestaurantRequestEnded()
-        tableController.update(guide.currentRestaurants, toBeAdded, toBeRemoved)
-    }
-    
-    func updateRestaurantList(_ newLocation: CLLocation) {
-        tableController.updateDistances(newLocation)
-    }
-}
-
-class RestaurantWithDistance: Hashable {
-    static func ==(lhs: RestaurantWithDistance, rhs: RestaurantWithDistance) -> Bool {
-        return lhs.restaurant == rhs.restaurant
-    }
-    
-    var hashValue: Int { get { return restaurant.hashValue } }
-    
-    var distance: Double
-    var restaurant: Restaurant
-    
-    init(_ distance: Double, _ restaurant: Restaurant) {
-        self.distance = distance
-        self.restaurant = restaurant
     }
 }
 
@@ -127,26 +91,11 @@ class RestaurantCollection {
             restaurants.insert(restaurant)
         }
     }
-}
-
-class RestaurantGuide {
-    private let maximalDistance: Double = 1000
     
-    var currentRestaurants = Set<RestaurantWithDistance>()
-    
-    func update(_ collection: RestaurantCollection, _ userLocation: CLLocation) -> (Set<Restaurant>, Set<Restaurant>) {
-        let currentRests = Set<Restaurant>(self.currentRestaurants.map() { $0.restaurant })
-        
-        let all = collection.restaurants.union(currentRests)
-        let allWithinReach = all.filter() { $0.location.distance(from: userLocation) < maximalDistance }
-        let allOutOfReach = all.subtracting(allWithinReach)
-        let allCurrentOutOfReach = currentRests.intersection(allOutOfReach)
-        let allNotCurrent = all.subtracting(currentRests)
-        let allNotCurrentWithinReach = allNotCurrent.intersection(allWithinReach)
-        
-        currentRestaurants = Set<RestaurantWithDistance>(allWithinReach.map() { RestaurantWithDistance($0.location.distance(from: userLocation), $0) })
-        
-        return (allCurrentOutOfReach, allNotCurrentWithinReach)
+    func within(_ dist: Double, of userLocation: CLLocation) -> [Restaurant] {
+        let arrayToDist = Array(restaurants).toDictionary() { $0.location.distance(from: userLocation) }
+        let restaurantsWithinReach = restaurants.filter() { arrayToDist[$0]! < dist }
+        return restaurantsWithinReach.sorted() { arrayToDist[$0]! < arrayToDist[$1]! }
     }
 }
 
